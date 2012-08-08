@@ -1,6 +1,6 @@
-# Pdf: TCPDF simple wrapper for CakePHP
+# Pdf: TCPDF and FPDI simple wrapper for CakePHP
 
-TCPDF simple wrapper for CakePHP
+TCPDF and FPDI simple wrapper for CakePHP
 
 [![Build Status](https://secure.travis-ci.org/k1LoW/Pdf.png?branch=master)](http://travis-ci.org/k1LoW/Pdf)
 

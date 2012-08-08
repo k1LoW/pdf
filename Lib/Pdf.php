@@ -20,6 +20,7 @@ class Pdf {
     public function __construct($templateFilePath = null, $init = true){
         $this->fpdi = new FPDI();
         if ($init) {
+            $this->fpdi->setPageUnit('mm');
             $this->fpdi->SetMargins(0, 0, 0);     // 用紙の余白を設定
             $this->fpdi->SetCellPadding(0);       // セルのパディングを設定
             $this->fpdi->SetAutoPageBreak(false); // 自動改ページ
@@ -91,8 +92,10 @@ class Pdf {
         $page = $this->fpdi->setSourceFile($this->templateFilePath);
 
         $font = Configure::read('Pdf.font');
+        $fontSize = Configure::read('Pdf.fontSize');
+        $fontSize = empty($fontSize) ? 10 : (double)$fontSize;
         if ($font) {
-            $this->fpdi->SetFont($font, '', 10);
+            $this->fpdi->SetFont($font, '', $fontSize);
         }
 
         for ($i = 0; $i < $page; $i++) {
@@ -100,8 +103,10 @@ class Pdf {
             $this->fpdi->useTemplate($this->fpdi->importPage($i + 1));
             if (!empty($this->data[$i])) {
                 foreach ($this->data[$i] as $value) {
-                    $this->fpdi->MultiCell(0,
-                                           0,
+                    $width = empty($value[1]['width']) ? 0 : $value[1]['width'];
+                    $height = empty($value[1]['height']) ? 0 : $value[1]['height'];
+                    $this->fpdi->MultiCell($width,
+                                           $height,
                                            $value[0],
                                            0,
                                            'J',

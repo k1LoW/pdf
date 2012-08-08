@@ -12,6 +12,7 @@ class PdfTestCase extends CakeTestCase{
         $this->pdf = new Pdf();
         $font = $this->pdf->addTTFfont(dirname(__FILE__) . '/../../../Test/File/ipag00303/ipag.ttf', 'TrueTypeUnicode');
         Configure::write('Pdf.font', $font);
+        Configure::write('Pdf.fontSize', 10);
     }
 
     /**
@@ -41,11 +42,14 @@ class PdfTestCase extends CakeTestCase{
         $result = $this->pdf->read($this->inputFilePath)
             ->setValue('あいうえおかきくけこさしすせそ', array('x' => 10,
                                                                'y' => 20))
-            ->setValue("あいうえお\nかきくけこ\nさしすせそ", array('x' => 10,
+            ->setValue('ABCDEFGHIJKLMNOPQRSTUVWXYZ', array('width' => 10,
+                                                               'x' => 10,
+                                                               'y' => 30))
+            ->setValue("アイウエオ\nカキクケコ\nサシスセソ", array('x' => 30,
                                                                    'y' => 30))
-            ->setValue('testtesttesttesttest', array('x' => 10,
-                                                     'y' => 20,
-                                                     'page' => 5))
+            ->setValue('6ページ目に表示されています', array('x' => 10,
+                                                            'y' => 20,
+                                                            'page' => 5))
             ->write($this->outputFilePath);
         $this->assertTrue($result);
         pr('Look ' . $this->outputFilePath);
