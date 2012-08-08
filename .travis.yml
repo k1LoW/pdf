@@ -42,9 +42,7 @@ before_script:
       'encoding' => 'utf8'
     );
     }" > cakephp/app/Config/database.php
-  - echo "<?php
-    $recipe = array('TCPDF', 'FPDI');
-    " > cakephp/r.php
+  - echo "<?php \$recipe = array('TCPDF', 'FPDI');" > cakephp/r.php
   - cd ./cakephp
   - wget https://raw.github.com/k1LoW/recipe/master/recipe.php --no-check-certificate -O recipe.php && php recipe.php -r r.php
   - chmod 777 app/Vendor/TCPDF/fonts
