@@ -50,7 +50,36 @@ class PdfTestCase extends CakeTestCase{
             ->setValue('6ページ目に表示されています', array('x' => 10,
                                                             'y' => 20,
                                                             'page' => 5))
-            ->write($this->outputFilePath);
+            ->write()
+            ->output($this->outputFilePath);
+        $this->assertTrue($result);
+        pr('Look ' . $this->outputFilePath);
+        pr("Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB");
+    }
+
+    /**
+     * testChangeFontSize
+     *
+     */
+    public function testChangeFontSize(){
+        $fileName = 'cookbook.pdf';
+        $this->inputFilePath = TMP . 'tests' . DS . $fileName;
+        $this->outputFilePath = TMP . 'tests' . DS . 'output_change_font.pdf';
+        $this->_setTestFile($fileName, $this->inputFilePath);
+
+        $result = $this->pdf->read($this->inputFilePath)
+            ->setValue('あいうえおかきくけこさしすせそ', array('x' => 10,
+                                                               'y' => 20))
+            ->setValue('あいうえおかきくけこさしすせそ', array(
+                    'x' => 10,
+                    'y' => 30,
+                    'fontSize' => 20))
+            ->setValue('あいうえおかきくけこさしすせそ', array(
+                    'x' => 10,
+                    'y' => 50,
+                    'fontSize' => 40))
+            ->write()
+            ->output($this->outputFilePath);
         $this->assertTrue($result);
         pr('Look ' . $this->outputFilePath);
         pr("Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB");

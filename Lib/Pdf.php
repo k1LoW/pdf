@@ -50,7 +50,17 @@ class Pdf {
      *
      */
     public function read($templateFilePath){
+        if(!file_exists($templateFilePath)) {
+            throw new Exception();
+        }
         $this->templateFilePath = $templateFilePath;
+        $this->fpdi->setFontSubsetting(true);
+        $font = Configure::read('Pdf.font');
+        $fontSize = Configure::read('Pdf.fontSize');
+        $fontSize = empty($fontSize) ? 10 : (double)$fontSize;
+        if ($font) {
+            $this->fpdi->SetFont($font, '', $fontSize);
+        }
         return $this;
     }
 
@@ -83,20 +93,15 @@ class Pdf {
      *
      * @param $outputFilePath
      */
-    public function write($outputFilePath){
+    public function write(){
         if (!$this->templateFilePath) {
-            $this->read($outputFilePath);
+            throw new Exception();
         }
-
-        $this->fpdi->setFontSubsetting(true);
         $page = $this->fpdi->setSourceFile($this->templateFilePath);
 
         $font = Configure::read('Pdf.font');
         $fontSize = Configure::read('Pdf.fontSize');
         $fontSize = empty($fontSize) ? 10 : (double)$fontSize;
-        if ($font) {
-            $this->fpdi->SetFont($font, '', $fontSize);
-        }
 
         for ($i = 0; $i < $page; $i++) {
             $this->fpdi->AddPage();
@@ -105,6 +110,12 @@ class Pdf {
                 foreach ($this->data[$i] as $value) {
                     $width = empty($value[1]['width']) ? 0 : $value[1]['width'];
                     $height = empty($value[1]['height']) ? 0 : $value[1]['height'];
+                    if (!empty($value[1]['fontSize']) && $value[1]['fontSize'] != $fontSize) {
+                        $fontSize = $value[1]['fontSize'];
+                        if ($font) {
+                            $this->fpdi->SetFont($font, '', $fontSize);
+                        }
+                    }
                     $this->fpdi->MultiCell($width,
                                            $height,
                                            $value[0],
@@ -118,7 +129,16 @@ class Pdf {
                 }
             }
         }
+        $this->data = array();
+        return $this;
+    }
 
+    /**
+     * output
+     *
+     * @param $outputFilePath
+     */
+    public function output($outputFilePath){
         $this->fpdi->Output($outputFilePath, 'F');
         if(!file_exists($outputFilePath)) {
             throw new Exception();
