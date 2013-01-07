@@ -100,8 +100,9 @@ class Pdf {
         $page = $this->fpdi->setSourceFile($this->templateFilePath);
 
         $font = Configure::read('Pdf.font');
-        $fontSize = Configure::read('Pdf.fontSize');
-        $fontSize = empty($fontSize) ? 10 : (double)$fontSize;
+        $defaultFontSize = Configure::read('Pdf.fontSize');
+        $defaultFontSize = empty($defaultFontSize) ? 10 : (double)$defaultFontSize;
+        $changed = false;
 
         for ($i = 0; $i < $page; $i++) {
             $this->fpdi->AddPage();
@@ -110,10 +111,11 @@ class Pdf {
                 foreach ($this->data[$i] as $value) {
                     $width = empty($value[1]['width']) ? 0 : $value[1]['width'];
                     $height = empty($value[1]['height']) ? 0 : $value[1]['height'];
-                    if (!empty($value[1]['fontSize']) && $value[1]['fontSize'] != $fontSize) {
+                    if (!empty($value[1]['fontSize']) && $value[1]['fontSize'] != $defaultFontSize) {
                         $fontSize = $value[1]['fontSize'];
                         if ($font) {
                             $this->fpdi->SetFont($font, '', $fontSize);
+                            $changed = true;
                         }
                     }
                     $this->fpdi->MultiCell($width,
@@ -126,6 +128,12 @@ class Pdf {
                                            $value[1]['x'],
                                            $value[1]['y']
                                            );
+                    if ($changed) {
+                        if ($font) {
+                            $this->fpdi->SetFont($font, '', $defaultFontSize);
+                            $changed = false;
+                        }
+                    }
                 }
             }
         }
