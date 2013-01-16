@@ -111,6 +111,7 @@ class Pdf {
                 foreach ($this->data[$i] as $value) {
                     $width = empty($value[1]['width']) ? 0 : $value[1]['width'];
                     $height = empty($value[1]['height']) ? 0 : $value[1]['height'];
+                    $align = empty($value[1]['align']) ? 'J' : $value[1]['align'];
                     if (!empty($value[1]['fontSize']) && $value[1]['fontSize'] != $defaultFontSize) {
                         $fontSize = $value[1]['fontSize'];
                         if ($font) {
@@ -122,7 +123,7 @@ class Pdf {
                                            $height,
                                            $value[0],
                                            0,
-                                           'J',
+                                           $align,
                                            0,
                                            1,
                                            $value[1]['x'],
