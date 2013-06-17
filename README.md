@@ -8,6 +8,8 @@ TCPDF and FPDI simple wrapper for CakePHP
 
 Install 'Pdf' by [recipe.php](https://github.com/k1LoW/recipe) , and set `CakePlugin::load('Pdf');`
 
+And set +x permission ``app/Vendor/TCPDF/fonts``
+
 ## Requirement
 
 - TCPDF
