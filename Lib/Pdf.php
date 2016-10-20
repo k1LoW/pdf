@@ -105,8 +105,17 @@ class Pdf {
         $changed = false;
 
         for ($i = 0; $i < $page; $i++) {
-            $this->fpdi->AddPage();
-            $this->fpdi->useTemplate($this->fpdi->importPage($i + 1));
+            $templateIndex = $this->fpdi->importPage($i + 1);
+            $pageSize = $this->fpdi->getTemplateSize($i + 1);
+            $pageSizeW = $pageSize['w'];
+            $pageSizeH = $pageSize['h'];
+            if ($pageSizeW<=$pageSizeH) {
+                $pageOrientation = "P";
+            } else {
+                $pageOrientation = "L";
+            }
+            $this->fpdi->AddPage($pageOrientation, array($pageSizeW,$pageSizeH));
+            $this->fpdi->useTemplate($templateIndex);
             if (!empty($this->data[$i])) {
                 foreach ($this->data[$i] as $value) {
                     $width = empty($value[1]['width']) ? 0 : $value[1]['width'];
