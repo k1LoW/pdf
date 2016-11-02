@@ -12,8 +12,8 @@ $pdf->appendTTFfont('/path/to/ipag.ttf');
     ->setValue('あいうえお', ['x' => 10, 'y' => 20])
     ->setValue('6ページ目', ['x' => 10, 'y' => 20, 'page' => 5])
     ->setValue('あいうえお', [
-        'x' => 10,
-        'y' => 20,
+        'x' => 120,
+        'y' => 45,
         'width' => 100,
         'height' => 230,
         'fontSize' => 24
