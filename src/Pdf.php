@@ -22,7 +22,8 @@ class Pdf
      * __construct
      *
      */
-    public function __construct($templateFilePath = null, $init = true){
+    public function __construct($templateFilePath = null, $init = true)
+    {
         $this->fpdi = new FPDI();
         if ($init) {
             $this->fpdi->setPageUnit('mm');
@@ -43,18 +44,20 @@ class Pdf
      *
      * @param $method, $args
      */
-    public function __call($method, $args){
+    public function __call($method, $args)
+    {
         if (!$this->fpdi) {
             return;
         }
-        return call_user_func_array(array($this->fpdi, $method), $args);
+        return call_user_func_array([$this->fpdi, $method], $args);
     }
 
     /**
      * appendTTFfont
      *
      */
-    public function appendTTFfont($fontFilePath, $alias = null){
+    public function appendTTFfont($fontFilePath, $alias = null)
+    {
         $tcpdfFonts = new TCPDF_FONTS();
         $font = $tcpdfFonts->addTTFfont($fontFilePath);
         if (empty($alias)) {
@@ -68,7 +71,8 @@ class Pdf
      * read
      *
      */
-    public function read($templateFilePath){
+    public function read($templateFilePath)
+    {
         if(!file_exists($templateFilePath)) {
             throw new PdfException('Not found template PDF file');
         }
@@ -82,9 +86,10 @@ class Pdf
      *
      * @param $arg
      */
-    public function setValue($value, $option = array('x' => 0,
-                                                     'y' => 0,
-                                                     'page' => 0)){
+    public function setValue($value, Array $option = ['x' => 0,
+                                                'y' => 0,
+                                                'page' => 0])
+    {
         if (!array_key_exists('x', $option)
             || !array_key_exists('y', $option)
         ) {
@@ -106,7 +111,8 @@ class Pdf
      *
      * @param $outputFilePath
      */
-    public function write(){
+    public function write()
+    {
         if (!$this->templateFilePath) {
             throw new PdfException('Not found template PDF file.');
         }
@@ -164,7 +170,7 @@ class Pdf
                 }
             }
         }
-        $this->data = array();
+        $this->data = [];
         return $this;
     }
 
@@ -173,10 +179,11 @@ class Pdf
      *
      * @param $outputFilePath
      */
-    public function output($outputFilePath){
+    public function output($outputFilePath)
+    {
         $this->fpdi->Output($outputFilePath, 'F');
         if(!file_exists($outputFilePath)) {
-            throw new Exception();
+            throw new PdfException('Could not output PDF file.');
         }
         return true;
     }
