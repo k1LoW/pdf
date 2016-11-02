@@ -1,0 +1,29 @@
+{
+    "name": "k1low/pdf",
+    "description": "TCPDF and FPDI simple wrapper",
+    "keywords": ["pdf"],
+    "homepage": "https://github.com/k1LoW/pdf",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "k1LoW",
+            "email": "k1lowxb@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "~5.4",
+        "setasign/fpdi-tcpdf": "1.6.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=4.1.0"
+    },
+    "autoload": {
+        "psr-4": { "Pdf\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pdf\\Test\\": "tests"
+        }
+    }
+}

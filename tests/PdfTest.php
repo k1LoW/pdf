@@ -1,32 +1,21 @@
 <?php
-App::uses('Pdf', 'Pdf.Lib');
-class PdfTestCase extends CakeTestCase{
+
+namespace Pdf\tests;
+
+use Pdf\Pdf;
+
+class PdfTest extends \PHPUnit_Framework_TestCase
+{
+    public $pdf;
 
     /**
-     * __construct
-     *
+     * setUp.
      */
-    public function __construct(){
-        parent::__construct();
+    public function setUp()
+    {
         ini_set('memory_limit', -1);
         $this->pdf = new Pdf();
-        $font = $this->pdf->addTTFfont(dirname(__FILE__) . '/../../../Test/File/ipag00303/ipag.ttf', 'TrueTypeUnicode');
-        Configure::write('Pdf.font', $font);
-        Configure::write('Pdf.fontSize', 10);
-    }
-
-    /**
-     * setUp
-     *
-     */
-    public function setUp(){
-    }
-
-    /**
-     * tearDown
-     *
-     */
-    public function tearDown(){
+        $this->pdf->appendTTFfont(dirname(__FILE__) . '/ipag00303/ipag.ttf', 'IPAG');
     }
 
     /**
@@ -35,9 +24,9 @@ class PdfTestCase extends CakeTestCase{
      */
     public function testWrite(){
         $fileName = 'cookbook.pdf';
-        $this->inputFilePath = TMP . 'tests' . DS . $fileName;
-        $this->outputFilePath = TMP . 'tests' . DS . 'output.pdf';
-        $this->_setTestFile($fileName, $this->inputFilePath);
+        $this->inputFilePath = '/tmp/' . $fileName;
+        $this->outputFilePath = '/tmp/output.pdf';
+        $this->setTestFile($fileName, $this->inputFilePath);
 
         $result = $this->pdf->read($this->inputFilePath)
             ->setValue('あいうえおかきくけこさしすせそ', array('x' => 10,
@@ -53,8 +42,8 @@ class PdfTestCase extends CakeTestCase{
             ->write()
             ->output($this->outputFilePath);
         $this->assertTrue($result);
-        pr('Look ' . $this->outputFilePath);
-        pr("Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB");
+        var_dump('Look ' . $this->outputFilePath);
+        var_dump("Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB");
     }
 
     /**
@@ -63,9 +52,9 @@ class PdfTestCase extends CakeTestCase{
      */
     public function testChangeFontSize(){
         $fileName = 'cookbook.pdf';
-        $this->inputFilePath = TMP . 'tests' . DS . $fileName;
-        $this->outputFilePath = TMP . 'tests' . DS . 'output_change_font.pdf';
-        $this->_setTestFile($fileName, $this->inputFilePath);
+        $this->inputFilePath = '/tmp/' . $fileName;
+        $this->outputFilePath = '/tmp/output_change_font.pdf';
+        $this->setTestFile($fileName, $this->inputFilePath);
 
         $result = $this->pdf->read($this->inputFilePath)
             ->setValue('あいうえおかきくけこさしすせそ', array('x' => 10,
@@ -81,20 +70,28 @@ class PdfTestCase extends CakeTestCase{
             ->write()
             ->output($this->outputFilePath);
         $this->assertTrue($result);
-        pr('Look ' . $this->outputFilePath);
-        pr("Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB");
+        var_dump('Look ' . $this->outputFilePath);
+        var_dump("Peak memory usage: " . (memory_get_peak_usage(true) / 1024 / 1024) . " MB");
+    }
+    
+    /**
+     * tearDown.
+     */
+    public function tearDown()
+    {
+        unset($this->pdf);
     }
 
     /**
-     * _setTestFile
+     * setTestFile
      *
      * @return
      */
-    private function _setTestFile($fileName, $to = null){
+    private function setTestFile($fileName, $to = null){
         if (!$fileName || !$to) {
             return false;
         }
-        $from = dirname(__FILE__) . '/../../../Test/File/' . $fileName;
+        $from = dirname(__FILE__) . '/' . $fileName;
         return copy($from, $to);
     }
 }

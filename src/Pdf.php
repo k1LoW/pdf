@@ -1,18 +1,23 @@
 <?php
-App::import('Vendor', 'TCPDF', array('file' => 'TCPDF' . DS . 'tcpdf.php'));
-App::import('Vendor', 'FPDI', array('file' => 'FPDI' . DS . 'fpdi.php'));
 
-/**
- * Pdf
- *
- *
- */
-class Pdf {
+namespace Pdf;
 
+if (file_exists(dirname(__FILE__).'/../vendor/autoload.php')) {
+    require_once dirname(__FILE__).'/../vendor/autoload.php';
+}
+
+use Pdf\Exception\PdfException;
+use \FPDI;
+use \TCPDF_FONTS;
+
+class Pdf
+{
     public $fpdi;
     private $templateFilePath;
-    private $data = array();
-
+    private $fonts = [];
+    private $data = [];
+    const DEFAULT_FONT_SIZE = 10;
+    
     /**
      * __construct
      *
@@ -46,21 +51,29 @@ class Pdf {
     }
 
     /**
+     * appendTTFfont
+     *
+     */
+    public function appendTTFfont($fontFilePath, $alias = null){
+        $tcpdfFonts = new TCPDF_FONTS();
+        $font = $tcpdfFonts->addTTFfont($fontFilePath);
+        if (empty($alias)) {
+            $alias = $font;
+        }
+        $this->fonts[$alias] = $font;
+        return $this;
+    }
+    
+    /**
      * read
      *
      */
     public function read($templateFilePath){
         if(!file_exists($templateFilePath)) {
-            throw new Exception();
+            throw new PdfException('Not found template PDF file');
         }
         $this->templateFilePath = $templateFilePath;
         $this->fpdi->setFontSubsetting(true);
-        $font = Configure::read('Pdf.font');
-        $fontSize = Configure::read('Pdf.fontSize');
-        $fontSize = empty($fontSize) ? 10 : (double)$fontSize;
-        if ($font) {
-            $this->fpdi->SetFont($font, '', $fontSize);
-        }
         return $this;
     }
 
@@ -74,7 +87,7 @@ class Pdf {
                                                      'page' => 0)){
         if (!array_key_exists('x', $option)
             || !array_key_exists('y', $option)
-            ) {
+        ) {
             return false;
         }
         if(!array_key_exists('page', $option)) {
@@ -95,14 +108,18 @@ class Pdf {
      */
     public function write(){
         if (!$this->templateFilePath) {
-            throw new Exception();
+            throw new PdfException('Not found template PDF file.');
+        }
+        if(empty($this->fonts)) {
+            throw new PdfException('Not found font. Use Pdf::appendTTFfont()');
         }
         $page = $this->fpdi->setSourceFile($this->templateFilePath);
 
-        $font = Configure::read('Pdf.font');
-        $defaultFontSize = Configure::read('Pdf.fontSize');
-        $defaultFontSize = empty($defaultFontSize) ? 10 : (double)$defaultFontSize;
-        $changed = false;
+        $keys = array_keys($this->fonts);
+        $font = $this->fonts[$keys[0]];
+        $defaultFontSize = self::DEFAULT_FONT_SIZE;
+        $this->fpdi->SetFont($font, '', $defaultFontSize);
+        $changed = false;        
 
         for ($i = 0; $i < $page; $i++) {
             $templateIndex = $this->fpdi->importPage($i + 1);
@@ -137,7 +154,7 @@ class Pdf {
                                            1,
                                            $value[1]['x'],
                                            $value[1]['y']
-                                           );
+                    );
                     if ($changed) {
                         if ($font) {
                             $this->fpdi->SetFont($font, '', $defaultFontSize);
