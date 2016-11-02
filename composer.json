@@ -1,6 +1,6 @@
 {
     "name": "k1low/pdf",
-    "description": "TCPDF and FPDI simple wrapper",
+    "description": "pdf: TCPDF and FPDI wrapper",
     "keywords": ["pdf"],
     "homepage": "https://github.com/k1LoW/pdf",
     "type": "library",

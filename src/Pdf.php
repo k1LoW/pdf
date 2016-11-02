@@ -87,8 +87,8 @@ class Pdf
      * @param $arg
      */
     public function setValue($value, Array $option = ['x' => 0,
-                                                'y' => 0,
-                                                'page' => 0])
+                                                      'y' => 0,
+                                                      'page' => 0])
     {
         if (!array_key_exists('x', $option)
             || !array_key_exists('y', $option)
